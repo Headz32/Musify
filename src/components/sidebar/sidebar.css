@@ -1,0 +1,15 @@
+.sidebar-container {
+  height: 100%;
+  width: 100px;
+  align-items: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.sidebar_logo {
+  width: 50px;
+  height: 50px;
+  border-radius: 20px;
+  margin-top: 20px;
+}
