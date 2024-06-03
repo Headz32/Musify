@@ -1,10 +1,10 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, useCallback } from "react";
 import "./audioPlayer.css";
 import Controls from "./controls";
 import ProgressCircle from "./progressCircle";
 import WaveAnimation from "./waveAnimation";
 
-export default function AudioPLayer({
+export default function AudioPlayer({
   currentTrack,
   currentIndex,
   setCurrentIndex,
@@ -24,7 +24,15 @@ export default function AudioPLayer({
 
   const currentPercentage = duration ? (trackProgress / duration) * 100 : 0;
 
-  const startTimer = () => {
+  const handleNext = useCallback(() => {
+    if (currentIndex < total.length - 1) {
+      setCurrentIndex(currentIndex + 1);
+    } else {
+      setCurrentIndex(0);
+    }
+  }, [currentIndex, total.length, setCurrentIndex]);
+
+  const startTimer = useCallback(() => {
     clearInterval(intervalRef.current);
 
     intervalRef.current = setInterval(() => {
@@ -34,7 +42,7 @@ export default function AudioPLayer({
         setTrackProgress(audioRef.current.currentTime);
       }
     }, [1000]);
-  };
+  }, [handleNext]);
 
   useEffect(() => {
     if (audioRef.current.src) {
@@ -55,7 +63,7 @@ export default function AudioPLayer({
         audioRef.current.pause();
       }
     }
-  }, [isPlaying]);
+  }, [isPlaying, audioSrc, startTimer]);
 
   useEffect(() => {
     audioRef.current.pause();
@@ -70,7 +78,7 @@ export default function AudioPLayer({
     } else {
       isReady.current = true;
     }
-  }, [currentIndex]);
+  }, [currentIndex, audioSrc, startTimer]);
 
   useEffect(() => {
     return () => {
@@ -79,24 +87,23 @@ export default function AudioPLayer({
     };
   }, []);
 
-  const handleNext = () => {
-    if (currentIndex < total.length - 1) {
-      setCurrentIndex(currentIndex + 1);
-    } else setCurrentIndex(0);
-  };
-
-  const handlePrev = () => {
-    if (currentIndex - 1 < 0) setCurrentIndex(total.length - 1);
-    else setCurrentIndex(currentIndex - 1);
-  };
+  const handlePrev = useCallback(() => {
+    if (currentIndex - 1 < 0) {
+      setCurrentIndex(total.length - 1);
+    } else {
+      setCurrentIndex(currentIndex - 1);
+    }
+  }, [currentIndex, total.length, setCurrentIndex]);
 
   const addZero = (n) => {
     return n > 9 ? "" + n : "0" + n;
   };
+
   const artists = [];
   currentTrack?.album?.artists.forEach((artist) => {
     artists.push(artist.name);
   });
+
   return (
     <div className="player-body flex">
       <div className="player-left-body">
