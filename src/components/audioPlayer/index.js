@@ -112,7 +112,7 @@ export default function AudioPlayer({
           isPlaying={true}
           image={currentTrack?.album?.images[0]?.url}
           size={300}
-          color="#C96850"
+          color="#b421b4"
         />
       </div>
       <div className="player-right-body flex">

@@ -1,3 +1,4 @@
+/* Base styles for the disk */
 circle {
   transition: all 1s ease-in-out;
   transform: rotate(93deg);
@@ -10,15 +11,30 @@ image.active {
 }
 
 .progress-circle {
+  display: flex;
   justify-content: center;
   align-items: center;
+  opacity: 1;
+  transform: scale(1);
+  transition: opacity 0.5s ease, transform 0.5s ease;
 }
 
+/* Keyframes for rotation animation */
 @keyframes rotation {
   from {
     transform: rotate(0deg);
   }
   to {
     transform: rotate(359deg);
+  }
+}
+
+/* Responsive styles */
+
+/* Hide disk for smaller screens */
+@media (max-width: 1300px), (max-height: 690px) {
+  .progress-circle {
+    opacity: 0;
+    transform: scale(0);
   }
 }

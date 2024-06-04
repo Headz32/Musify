@@ -1,4 +1,7 @@
+/* Base styles */
 .player-body {
+  display: flex;
+  flex-direction: row;
   width: 100%;
   height: 40%;
   margin: 3% 0%;
@@ -6,9 +9,13 @@
 
 .player-left-body {
   width: 37%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .player-right-body {
+  display: flex;
   width: 63%;
   flex-direction: column;
   justify-content: space-between;
@@ -17,9 +24,9 @@
 
 .song-title {
   text-align: center;
-  font-size: 58px;
+  font-size: 3vw; /* Responsive font size */
   font-weight: bold;
-  margin: 0px;
+  margin: 0;
   color: #c4d0e3;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -31,17 +38,20 @@
 
 .song-artist {
   color: #9aa9c2;
-  font-size: 14px;
+  font-size: 1vw; /* Responsive font size */
   font-weight: 500;
+  margin: 0;
 }
 
 .player-right-bottom {
+  display: flex;
   align-items: center;
   width: 100%;
   flex-direction: column;
 }
 
 .song-duration {
+  display: flex;
   width: 50%;
   justify-content: space-between;
   margin-bottom: 20px;
@@ -49,8 +59,55 @@
 }
 
 .duration {
-  font-size: 20px;
+  font-size: 1.5vw; /* Responsive font size */
   font-weight: 700;
   margin: 0;
   color: #c4d0e3;
+}
+
+@media (max-width: 1300px) {
+  .player-left-body {
+    width: 20%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
+/* Media Queries */
+@media (max-width: 768px) {
+  .player-body {
+    flex-direction: column;
+    height: auto;
+  }
+
+  .player-left-body,
+  .player-right-body {
+    width: 100%;
+  }
+
+  .song-title {
+    font-size: 6vw; /* Larger font size for smaller screens */
+  }
+
+  .song-artist {
+    font-size: 3vw; /* Larger font size for smaller screens */
+  }
+
+  .duration {
+    font-size: 3vw; /* Larger font size for smaller screens */
+  }
+}
+
+@media (max-width: 480px) {
+  .song-title {
+    font-size: 8vw; /* Even larger font size for very small screens */
+  }
+
+  .song-artist {
+    font-size: 4vw; /* Even larger font size for very small screens */
+  }
+
+  .duration {
+    font-size: 4vw; /* Even larger font size for very small screens */
+  }
 }
