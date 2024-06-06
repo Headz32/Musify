@@ -13,21 +13,64 @@ import { setClientToken } from "../../spotify";
 
 function Home() {
   const [token, setToken] = useState("");
+  const [expirationTime, setExpirationTime] = useState(null);
 
   useEffect(() => {
-    const token = window.localStorage.getItem("token");
+    const storedToken = window.localStorage.getItem("token");
+    const storedExpirationTime = window.localStorage.getItem("expiration_time");
     const hash = window.location.hash;
     window.location.hash = "";
-    if (!token && hash) {
-      const _token = hash.split("&")[0].split("=")[1];
+
+    if (!storedToken && hash) {
+      const params = new URLSearchParams(hash.substring(1));
+      const _token = params.get("access_token");
+      const expiresIn = params.get("expires_in"); // Typically 3600 seconds
+      const _expirationTime = new Date().getTime() + expiresIn * 1000;
+
       window.localStorage.setItem("token", _token);
+      window.localStorage.setItem("expiration_time", _expirationTime);
+
       setToken(_token);
+      setExpirationTime(_expirationTime);
       setClientToken(_token);
-    } else {
-      setToken(token);
-      setClientToken(token);
+    } else if (storedToken && storedExpirationTime) {
+      const currentTime = new Date().getTime();
+      if (currentTime < storedExpirationTime) {
+        setToken(storedToken);
+        setExpirationTime(storedExpirationTime);
+        setClientToken(storedToken);
+      } else {
+        // Token has expired
+        window.localStorage.removeItem("token");
+        window.localStorage.removeItem("expiration_time");
+        setToken("");
+        setExpirationTime(null);
+      }
     }
   }, []);
+
+  useEffect(() => {
+    if (expirationTime) {
+      const currentTime = new Date().getTime();
+      const timeout = expirationTime - currentTime;
+
+      if (timeout > 0) {
+        const timer = setTimeout(() => {
+          window.localStorage.removeItem("token");
+          window.localStorage.removeItem("expiration_time");
+          setToken("");
+          setExpirationTime(null);
+        }, timeout);
+
+        return () => clearTimeout(timer);
+      } else {
+        window.localStorage.removeItem("token");
+        window.localStorage.removeItem("expiration_time");
+        setToken("");
+        setExpirationTime(null);
+      }
+    }
+  }, [expirationTime]);
 
   return !token ? (
     <Login />
