@@ -12,16 +12,13 @@ export default function AudioPlayer({
 }) {
   const [isPlaying, setIsPlaying] = useState(false);
   const [trackProgress, setTrackProgress] = useState(0);
-  var audioSrc = total[currentIndex]?.track.preview_url;
+  const audioSrc = total[currentIndex]?.track.preview_url;
 
   const audioRef = useRef(new Audio(total[0]?.track.preview_url));
-
-  const intervalRef = useRef();
-
+  const intervalRef = useRef(null);
   const isReady = useRef(false);
 
   const { duration } = audioRef.current;
-
   const currentPercentage = duration ? (trackProgress / duration) * 100 : 0;
 
   const handleNext = useCallback(() => {
@@ -29,6 +26,14 @@ export default function AudioPlayer({
       setCurrentIndex(currentIndex + 1);
     } else {
       setCurrentIndex(0);
+    }
+  }, [currentIndex, total.length, setCurrentIndex]);
+
+  const handlePrev = useCallback(() => {
+    if (currentIndex - 1 < 0) {
+      setCurrentIndex(total.length - 1);
+    } else {
+      setCurrentIndex(currentIndex - 1);
     }
   }, [currentIndex, total.length, setCurrentIndex]);
 
@@ -41,43 +46,41 @@ export default function AudioPlayer({
       } else {
         setTrackProgress(audioRef.current.currentTime);
       }
-    }, [1000]);
+    }, 1000);
   }, [handleNext]);
 
   useEffect(() => {
-    if (audioRef.current.src) {
-      if (isPlaying) {
-        audioRef.current.play();
-        startTimer();
-      } else {
-        clearInterval(intervalRef.current);
-        audioRef.current.pause();
-      }
+    if (isPlaying) {
+      audioRef.current.play().catch((error) => console.error(error));
+      startTimer();
     } else {
-      if (isPlaying) {
-        audioRef.current = new Audio(audioSrc);
-        audioRef.current.play();
-        startTimer();
-      } else {
-        clearInterval(intervalRef.current);
-        audioRef.current.pause();
-      }
+      clearInterval(intervalRef.current);
+      audioRef.current.pause();
     }
-  }, [isPlaying, audioSrc, startTimer]);
+  }, [isPlaying, startTimer]);
 
   useEffect(() => {
     audioRef.current.pause();
     audioRef.current = new Audio(audioSrc);
 
-    setTrackProgress(audioRef.current.currentTime);
+    const playAudio = () => {
+      audioRef.current.play().catch((error) => console.error(error));
+      setTrackProgress(audioRef.current.currentTime);
+      if (isReady.current) {
+        setIsPlaying(true);
+        startTimer();
+      } else {
+        isReady.current = true;
+      }
+    };
 
-    if (isReady.current) {
-      audioRef.current.play();
-      setIsPlaying(true);
-      startTimer();
-    } else {
-      isReady.current = true;
-    }
+    audioRef.current.addEventListener("loadeddata", playAudio);
+
+    return () => {
+      audioRef.current.removeEventListener("loadeddata", playAudio);
+      audioRef.current.pause();
+      clearInterval(intervalRef.current);
+    };
   }, [currentIndex, audioSrc, startTimer]);
 
   useEffect(() => {
@@ -87,22 +90,13 @@ export default function AudioPlayer({
     };
   }, []);
 
-  const handlePrev = useCallback(() => {
-    if (currentIndex - 1 < 0) {
-      setCurrentIndex(total.length - 1);
-    } else {
-      setCurrentIndex(currentIndex - 1);
-    }
-  }, [currentIndex, total.length, setCurrentIndex]);
-
   const addZero = (n) => {
     return n > 9 ? "" + n : "0" + n;
   };
 
-  const artists = [];
-  currentTrack?.album?.artists.forEach((artist) => {
-    artists.push(artist.name);
-  });
+  const artists = currentTrack?.album?.artists
+    .map((artist) => artist.name)
+    .join(" | ");
 
   return (
     <div className="player-body flex">
@@ -117,7 +111,7 @@ export default function AudioPlayer({
       </div>
       <div className="player-right-body flex">
         <p className="song-title">{currentTrack?.name}</p>
-        <p className="song-artist">{artists.join(" | ")}</p>
+        <p className="song-artist">{artists}</p>
         <div className="player-right-bottom flex">
           <div className="song-duration flex">
             <p className="duration">0:{addZero(Math.round(trackProgress))}</p>
