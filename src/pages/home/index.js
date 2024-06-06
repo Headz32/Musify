@@ -6,42 +6,38 @@ import Trending from "../trending";
 import Feed from "../feed";
 import Favorites from "../favorites";
 import Sidebar from "../../components/sidebar";
-import Login from "../auth/login";
-import { setClientToken } from "../../spotify";
 
 import "./home.css";
-
-const TOKEN_EXPIRY_TIME = 3600 * 1000; // 1 hour in milliseconds
+import Login from "../auth/login";
+import { setClientToken } from "../../spotify";
 
 function Home() {
   const [token, setToken] = useState("");
 
-  const setTokenInLocalStorage = (_token) => {
-    const expiryTime = Date.now() + TOKEN_EXPIRY_TIME;
-    window.localStorage.setItem("token", _token);
-    window.localStorage.setItem("token_expiry", expiryTime);
-    setClientToken(_token);
-  };
-
   useEffect(() => {
-    const token = window.localStorage.getItem("token");
-    const expiryTime = window.localStorage.getItem("token_expiry");
+    const storedToken = window.localStorage.getItem("token");
     const hash = window.location.hash;
     window.location.hash = "";
 
-    if (!token && hash) {
+    if (hash && hash.includes("access_token")) {
       const _token = hash.split("&")[0].split("=")[1];
-      setTokenInLocalStorage(_token);
+      window.localStorage.setItem("token", _token);
       setToken(_token);
-    } else if (token && expiryTime) {
-      if (Date.now() > expiryTime) {
-        // Token is expired
+      setClientToken(_token);
+    } else if (storedToken) {
+      const expiresIn = window.localStorage.getItem("expires_in");
+      const expiryTime = Number(expiresIn) * 1000; // converting seconds to milliseconds
+      const now = Date.now();
+      if (now >= expiryTime) {
+        // Token has expired
         window.localStorage.removeItem("token");
-        window.localStorage.removeItem("token_expiry");
+        window.localStorage.removeItem("expires_in");
         setToken("");
+        setClientToken("");
       } else {
-        setToken(token);
-        setClientToken(token);
+        // Token is still valid
+        setToken(storedToken);
+        setClientToken(storedToken);
       }
     }
   }, []);
