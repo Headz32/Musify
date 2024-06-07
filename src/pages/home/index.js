@@ -4,7 +4,7 @@ import Library from "../library";
 import Player from "../player";
 import Trending from "../trending";
 import Feed from "../feed";
-import Favorites from "../favorites";
+//import Favorites from "../favorites";
 import Sidebar from "../../components/sidebar";
 import "./home.css";
 import Login from "../auth/login";
