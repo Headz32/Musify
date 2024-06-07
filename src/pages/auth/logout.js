@@ -1,14 +1,14 @@
+// src/components/Logout.js
 import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 
 function Logout() {
-  const navigate = useNavigate();
-
   useEffect(() => {
     window.localStorage.removeItem("token");
     window.localStorage.removeItem("expires_in");
-    navigate("/login");
-  }, [navigate]);
+
+    // Refresh the page to trigger the token check and show the login page
+    window.location.reload();
+  }, []);
 
   return null;
 }
