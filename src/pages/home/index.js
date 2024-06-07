@@ -11,32 +11,27 @@ import Login from "../auth/login";
 import { setClientToken } from "../../spotify";
 import Logout from "../auth/logout";
 
-
-
 function Home() {
   const [token, setToken] = useState("");
 
   useEffect(() => {
-    const [token, setToken] = useState("");
+    // Clear the token from localStorage initially
+    window.localStorage.removeItem("token");
 
-    useEffect(() => {
-      // Clear the token from localStorage initially
-      window.localStorage.removeItem("token");
-    
-      const hash = window.location.hash;
-      window.location.hash = "";
-      if (hash) {
-        const _token = hash.split("&")[0].split("=")[1];
-        window.localStorage.setItem("token", _token);
-        setToken(_token);
-        setClientToken(_token);
-      } else {
-        setToken(null);
-        setClientToken(null);
-      }
-    }, []);
-    
-    return !token ?  (
+    const hash = window.location.hash;
+    window.location.hash = "";
+    if (hash) {
+      const _token = hash.split("&")[0].split("=")[1];
+      window.localStorage.setItem("token", _token);
+      setToken(_token);
+      setClientToken(_token);
+    } else {
+      setToken();
+      setClientToken();
+    }
+  }, []);
+
+  return !token ? (
     <Login />
   ) : (
     <Router>
