@@ -12,13 +12,21 @@ function Sidebar() {
   const [image, setImage] = useState(
     "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRdLAY3C19kL0nV2bI_plU3_YFCtra0dpsYkg&usqp=CAU"
   );
+  const [showSidebar, setShowSidebar] = useState(false);
   useEffect(() => {
     apiClient.get("me").then((response) => {
       setImage(response.data.images[0].url);
     });
   }, []);
+  const toggleSidebar = () => {
+    setShowSidebar(!showSidebar);
+  };
+
   return (
-    <div className="sidebar-container">
+    <div className={`sidebar-container ${showSidebar ? "show-sidebar" : ""}`}>
+      <button className="sidebar-toggle-btn" onClick={toggleSidebar}>
+        Toggle Sidebar
+      </button>
       <img className="sidebar_logo" src={image} alt="Logo" />
       <div>
         <SidebarButton title="Feed" to="/feed" icon={<MdSpaceDashboard />} />
