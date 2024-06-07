@@ -10,6 +10,7 @@ import Sidebar from "../../components/sidebar";
 import "./home.css";
 import Login from "../auth/login";
 import { setClientToken } from "../../spotify";
+import Logout from "../auth/logout";
 
 function Home() {
   const [token, setToken] = useState("");
@@ -54,6 +55,7 @@ function Home() {
           <Route path="/trending" element={<Trending />} />
           <Route path="/player" element={<Player />} />
           <Route path="/favorites" element={<Favorites />} />
+          <Route path="/logout" element={<Logout />} />
         </Routes>
       </div>
     </Router>
