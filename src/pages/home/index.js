@@ -6,44 +6,37 @@ import Trending from "../trending";
 import Feed from "../feed";
 import Favorites from "../favorites";
 import Sidebar from "../../components/sidebar";
-
 import "./home.css";
 import Login from "../auth/login";
 import { setClientToken } from "../../spotify";
 import Logout from "../auth/logout";
 
+
+
 function Home() {
   const [token, setToken] = useState("");
 
   useEffect(() => {
-    const storedToken = window.localStorage.getItem("token");
-    const hash = window.location.hash;
-    window.location.hash = "";
+    const [token, setToken] = useState("");
 
-    if (hash && hash.includes("access_token")) {
-      const _token = hash.split("&")[0].split("=")[1];
-      window.localStorage.setItem("token", _token);
-      setToken(_token);
-      setClientToken(_token);
-    } else if (storedToken) {
-      const expiresIn = window.localStorage.getItem("expires_in");
-      const expiryTime = Number(expiresIn) * 1000; // converting seconds to milliseconds
-      const now = Date.now();
-      if (now >= expiryTime) {
-        // Token has expired
-        window.localStorage.removeItem("token");
-        window.localStorage.removeItem("expires_in");
-        setToken("");
-        setClientToken("");
+    useEffect(() => {
+      // Clear the token from localStorage initially
+      window.localStorage.removeItem("token");
+    
+      const hash = window.location.hash;
+      window.location.hash = "";
+      if (hash) {
+        const _token = hash.split("&")[0].split("=")[1];
+        window.localStorage.setItem("token", _token);
+        setToken(_token);
+        setClientToken(_token);
       } else {
-        // Token is still valid
-        setToken(storedToken);
-        setClientToken(storedToken);
+        setToken(null);
+        setClientToken(null);
       }
-    }
-  }, []);
-
-  return !token ? (
+    }, []);
+    
+    return !token ?  (
     <Login />
   ) : (
     <Router>
