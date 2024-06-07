@@ -22,7 +22,6 @@ function Trending() {
   return (
     <div className="screen-container">
       <div className="trending-body">
-        <h2>Featured Playlists</h2>
         {featuredPlaylists?.map((playlist) => (
           <div
             className="playlist-card"

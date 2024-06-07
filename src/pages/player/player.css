@@ -11,3 +11,14 @@
   flex-direction: column;
   justify-content: space-between;
 }
+@media (max-width: 768px) {
+  .left-player-body {
+    width: 100%;
+    margin-right: 0;
+  }
+
+  .right-player-body {
+    width: 100%;
+    margin-top: 20px; /* Adjust margin for spacing */
+  }
+}
