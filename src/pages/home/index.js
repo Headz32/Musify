@@ -42,7 +42,7 @@ function Home() {
           <Route path="/feed" element={<Feed />} />
           <Route path="/trending" element={<Trending />} />
           <Route path="/player" element={<Player />} />
-          <Route path="/favorites" element={<Favorites />} />
+          {/* <Route path="/favorites" element={<Favorites />} /> */}
           <Route path="/logout" element={<Logout />} />
         </Routes>
       </div>
