@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import "./sidebar.css";
 import SidebarButton from "./sidebarButton";
-import { MdFavorite } from "react-icons/md";
+//import { MdFavorite } from "react-icons/md";
 import { FaGripfire, FaPlay } from "react-icons/fa";
 import { FaSignOutAlt } from "react-icons/fa";
 import { IoLibrary } from "react-icons/io5";

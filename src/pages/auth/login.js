@@ -13,6 +13,7 @@ export default function Login() {
       <a href={loginEndpoint}>
         <div className="login-btn">LOG IN</div>
       </a>
+      <div className="copy">©Razvan and Mirel</div>
     </div>
   );
 }
